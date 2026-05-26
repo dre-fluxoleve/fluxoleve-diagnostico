@@ -514,19 +514,27 @@ footer{text-align:center;padding:16px;font-family:'Arial',sans-serif;font-size:1
 
 <div class="card">
   <h3><span class="ico">📊</span>DRE e dashboard</h3>
-  <div class="q"><label class="ql">Gestão financeira hoje <span class="req">*</span></label>
-  <div class="rg" id="rg-dre">
-    <label><input type="radio" name="dre" value="Sistema com DRE"/>Em sistema de gestão com DRE</label>
-    <label><input type="radio" name="dre" value="Planilha Excel"/>Planilha Excel</label>
-    <label><input type="radio" name="dre" value="Contabilidade — só vejo no fechamento"/>Pela contabilidade — só vejo no fechamento</label>
-    <label><input type="radio" name="dre" value="Sem controle"/>Sem controle estruturado</label>
-  </div></div>
-  <div class="q"><label class="ql">Modelo de DRE desejado no FluxoLeve</label>
-  <div class="rg" id="rg-dremod">
-    <label><input type="radio" name="dremod" value="Por CNPJ + consolidado do grupo"/>Cada CNPJ separado + resultado consolidado do grupo</label>
-    <label><input type="radio" name="dremod" value="Apenas consolidado"/>Apenas consolidado do grupo</label>
-    <label><input type="radio" name="dremod" value="Apenas por unidade"/>Apenas por unidade</label>
-  </div></div>
+  <div class="q"><label class="ql">Gestão financeira hoje <span class="req">*</span>
+    <span class="hint">Pode marcar mais de uma</span></label>
+  <div class="cg" id="cg-dre">
+    <label><input type="checkbox" value="Sistema com DRE"/>Em sistema de gestão com DRE</label>
+    <label><input type="checkbox" value="Planilha Excel"/>Planilha Excel</label>
+    <label><input type="checkbox" value="Contabilidade — só vejo no fechamento"/>Pela contabilidade — só vejo no fechamento</label>
+    <label><input type="checkbox" value="Sem controle estruturado"/>Sem controle estruturado</label>
+    <label><input type="checkbox" value="Outros" onchange="tog('outros-dre',this)"/>Outros</label>
+  </div>
+  <div class="outros-wrap" id="outros-dre"><input type="text" id="q_dre_out" placeholder="✏️ Descreva..."/></div></div>
+  <div class="q"><label class="ql">Modelo de DRE desejado no FluxoLeve
+    <span class="hint">Pode marcar mais de uma</span></label>
+  <div class="cg" id="cg-dremod">
+    <label><input type="checkbox" value="Cada CNPJ separado"/>Cada CNPJ separado — ver resultado de cada unidade</label>
+    <label><input type="checkbox" value="Consolidado do grupo"/>Consolidado do grupo — resultado total</label>
+    <label><input type="checkbox" value="Por centro de custo"/>Por centro de custo / departamento</label>
+    <label><input type="checkbox" value="Comparativo mensal"/>Comparativo mensal — mês a mês</label>
+    <label><input type="checkbox" value="Comparativo anual"/>Comparativo anual — ano a ano</label>
+    <label><input type="checkbox" value="Outros" onchange="tog('outros-dremod',this)"/>Outros</label>
+  </div>
+  <div class="outros-wrap" id="outros-dremod"><input type="text" id="q_dremod_out" placeholder="✏️ Descreva..."/></div></div>
   <div class="q"><label class="ql">Centros de resultado no dashboard
     <span class="hint">Cada um vira uma linha no DRE</span></label>
   <div class="chip-wrap" id="c-cr">
@@ -544,12 +552,15 @@ footer{text-align:center;padding:16px;font-family:'Arial',sans-serif;font-size:1
 
 <div class="card">
   <h3><span class="ico">🔄</span>Conciliação e pagamentos</h3>
-  <div class="q"><label class="ql">Conciliação bancária</label>
-  <div class="rg" id="rg-conc">
-    <label><input type="radio" name="conc" value="Sistema importa extrato"/>Sistema importa extrato do banco</label>
-    <label><input type="radio" name="conc" value="Manual em planilha"/>Manual em planilha</label>
-    <label><input type="radio" name="conc" value="Não fazemos"/>Não fazemos conciliação</label>
-  </div></div>
+  <div class="q"><label class="ql">Conciliação bancária
+    <span class="hint">Pode marcar mais de uma</span></label>
+  <div class="cg" id="cg-conc">
+    <label><input type="checkbox" value="Sistema importa extrato"/>Sistema importa extrato do banco</label>
+    <label><input type="checkbox" value="Manual em planilha"/>Manual em planilha</label>
+    <label><input type="checkbox" value="Não fazemos"/>Não fazemos conciliação</label>
+    <label><input type="checkbox" value="Outros" onchange="tog('outros-conc',this)"/>Outros</label>
+  </div>
+  <div class="outros-wrap" id="outros-conc"><input type="text" id="q_conc_out" placeholder="✏️ Descreva..."/></div></div>
   <div class="g2">
     <div class="q"><label class="ql">Maquininha de cartão</label>
     <select id="q_maq"><option value="">Selecione</option><option>Cielo</option><option>Stone</option><option>PagSeguro</option><option>Rede</option><option>Outro</option><option>Não usa</option></select></div>
@@ -777,9 +788,9 @@ function buildRep(){
   s.push(sep);
   s.push('▌ BLOCO 5 — FINANCEIRO');
   s.push('Contas: '+gr('contas')+' | Bancos: '+gv('q_nbancos')+' | Gestor: '+gv('q_gestfin'));
-  s.push('DRE atual: '+gr('dre')+' | Modelo: '+gr('dremod'));
+  s.push('DRE atual: '+gck('cg-dre')+(gv('q_dre_out')!='—'?' | '+gv('q_dre_out'):'')+' | Modelo: '+gck('cg-dremod')+(gv('q_dremod_out')!='—'?' | '+gv('q_dremod_out'):''));
   s.push('Centros resultado: '+gc('c-cr')+(gv('q_cr_out')!='—'?' | '+gv('q_cr_out'):''));
-  s.push('Conciliação: '+gr('conc')+' | Maquininha: '+gv('q_maq')+' | NFs/mês: '+gv('q_nfs'));
+  s.push('Conciliação: '+gck('cg-conc')+(gv('q_conc_out')!='—'?' | '+gv('q_conc_out'):'')+' | Maquininha: '+gv('q_maq')+' | NFs/mês: '+gv('q_nfs'));
   s.push(sep);
   s.push('▌ BLOCO 6 — INFRAESTRUTURA');
   s.push('Sistemas: '+gv('q_sis'));
@@ -816,8 +827,8 @@ function buildPayload(){
     esocial:gck('cg-esocial'),emissao_aso:gcom('cg-aso','q_aso_out'),vencimento:gr('venc'),
     contrato_so:gcom('cg-contrato','q_contrato_out'),faturamento_so:gcom('cg-fatso','q_fatso_out'),dor_so:gv('q_dor_so'),
     contas:gr('contas'),bancos:gv('q_nbancos'),gestor_fin:gv('q_gestfin'),
-    dre_atual:gr('dre'),dre_modelo:gr('dremod'),centros_resultado:gc('c-cr'),outros_cr:gv('q_cr_out'),
-    conciliacao:gr('conc'),maquininha:gv('q_maq'),nfs_mes:gv('q_nfs'),
+    dre_atual:gck('cg-dre'),outros_dre:gv('q_dre_out'),dre_modelo:gck('cg-dremod'),outros_dremod:gv('q_dremod_out'),centros_resultado:gc('c-cr'),outros_cr:gv('q_cr_out'),
+    conciliacao:gck('cg-conc'),outros_conc:gv('q_conc_out'),maquininha:gv('q_maq'),nfs_mes:gv('q_nfs'),
     sistemas:gv('q_sis'),problemas_sis:gcom('cg-probsis','q_probsis_out'),
     num_pcs:gv('q_npcs'),internet:gv('q_net'),ti:gr('ti'),
     num_usuarios:gv('q_nusers'),perfis:gc('c-perfis'),outros_perfis:gv('q_perfis_out'),
