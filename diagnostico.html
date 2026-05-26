@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>FluxoLeve™ — Diagnóstico 360°</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#B8962E;--gold-lt:#F5EDD0;--gold-md:#C9A84C;--gold-dk:#7A6018;
+  --navy:#0D1B2A;--navy-md:#1A3550;
+  --txt:#1C1C1C;--muted:#5A5A5A;--hint:#999;
+  --brd:#DDD5C0;--bg:#FAFAF7;--wh:#FFFFFF;
+  --r:10px;--sh:0 2px 14px rgba(0,0,0,0.07)
+}
+body{font-family:'Georgia',serif;background:var(--bg);color:var(--txt);font-size:15px;line-height:1.65;-webkit-text-size-adjust:100%}
+.site-header{background:var(--navy);position:sticky;top:0;z-index:100;border-bottom:2px solid var(--gold)}
+.hi{max-width:860px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo-wrap img{height:38px;filter:brightness(0) invert(1)}
+.ht{text-align:right}
+.ht small{font-family:'Arial',sans-serif;font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase;display:block}
+.ht strong{font-size:14px;color:#fff;font-family:'Georgia',serif}
+.prog-wrap{background:rgba(255,255,255,0.1);height:4px}
+.prog-fill{height:100%;background:var(--gold);transition:width .5s ease}
+.hero{background:var(--navy-md);padding:28px 16px 22px;text-align:center}
+.hero .tag{display:inline-block;background:var(--gold);color:var(--navy);font-family:'Arial',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:12px}
+.hero h2{font-size:1.5rem;color:#fff;font-weight:400;margin-bottom:5px}
+.hero p{font-family:'Arial',sans-serif;font-size:13px;color:rgba(255,255,255,0.5);max-width:500px;margin:0 auto}
+.snav{max-width:860px;margin:0 auto;padding:14px 16px 0;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--brd);transition:all .3s;flex-shrink:0}
+.dot.done{background:var(--gold-md)}
+.dot.active{background:var(--gold);transform:scale(1.5)}
+.slabel{font-family:'Arial',sans-serif;font-size:11px;color:var(--hint);margin-left:auto}
+main{max-width:860px;margin:0 auto;padding:0 16px 60px}
+.bh{background:var(--wh);border-left:4px solid var(--gold);border-radius:0 var(--r) var(--r) 0;padding:14px 18px;margin:18px 0 12px;box-shadow:var(--sh)}
+.bh .tb{font-family:'Arial',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold-dk);margin-bottom:4px}
+.bh h2{font-size:1.05rem;color:var(--navy);font-weight:400;margin-bottom:3px}
+.bh p{font-family:'Arial',sans-serif;font-size:12px;color:var(--muted)}
+.card{background:var(--wh);border:1px solid var(--brd);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:var(--sh)}
+.card h3{font-family:'Arial',sans-serif;font-size:11px;font-weight:700;color:var(--navy-md);text-transform:uppercase;letter-spacing:.9px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--gold-lt);display:flex;align-items:center;gap:7px}
+.card h3 .ico{background:var(--gold-lt);border:1px solid var(--gold);border-radius:5px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.q{margin-bottom:14px}.q:last-child{margin-bottom:0}
+label.ql{display:block;font-family:'Arial',sans-serif;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px}
+label.ql .req{color:#B83232;margin-left:2px}
+label.ql .hint{display:block;font-weight:400;font-size:11px;color:var(--hint);margin-top:1px}
+input[type=text],input[type=email],select,textarea{
+  width:100%;font-family:'Arial',sans-serif;font-size:14px;color:var(--txt);
+  border:1px solid var(--brd);border-radius:7px;padding:9px 12px;
+  background:var(--bg);outline:none;transition:border-color .2s,background .2s;
+  -webkit-appearance:none
+}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);background:var(--wh)}
+textarea{resize:vertical;min-height:68px}
+select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:500px){.g2{grid-template-columns:1fr}}
+/* CHIP */
+.chip-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.chip{font-family:'Arial',sans-serif;font-size:12px;font-weight:600;padding:6px 12px;border-radius:20px;background:var(--bg);border:1.5px solid var(--brd);cursor:pointer;transition:all .15s;user-select:none;color:var(--muted);-webkit-tap-highlight-color:transparent}
+.chip:hover,.chip:active{border-color:var(--gold-md);color:var(--navy)}
+.chip.on{background:var(--gold-lt);border-color:var(--gold);color:var(--gold-dk)}
+/* CHECK/RADIO */
+.rg,.cg{display:flex;flex-direction:column;gap:6px;margin-top:5px}
+.rg label,.cg label{
+  display:flex;align-items:flex-start;gap:10px;
+  font-family:'Arial',sans-serif;font-size:13px;color:var(--muted);cursor:pointer;
+  border:1px solid var(--brd);border-radius:7px;padding:9px 12px;
+  background:var(--bg);transition:all .15s;-webkit-tap-highlight-color:transparent
+}
+.rg label:hover,.cg label:hover,.rg label:active,.cg label:active{border-color:var(--gold-md);background:var(--gold-lt)}
+.rg label.on,.cg label.on{border-color:var(--gold);background:var(--gold-lt);color:var(--navy)}
+.rg input,.cg input{margin-top:2px;accent-color:var(--gold);flex-shrink:0;width:16px;height:16px}
+/* OUTROS field */
+.outros-wrap{margin-top:6px;display:none}
+.outros-wrap.show{display:block}
+.outros-wrap input{border-color:var(--gold-md);font-style:italic}
+/* ALERT */
+.alert{background:#FFF8E7;border:1px solid var(--gold-md);border-radius:8px;padding:10px 14px;font-family:'Arial',sans-serif;font-size:12px;color:#5C4200;margin-bottom:10px;display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+/* NAV */
+.nav-btns{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:20px;padding-top:16px;border-top:1px solid var(--brd)}
+.btn{font-family:'Arial',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;cursor:pointer;border:none;transition:all .18s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn-pri{background:var(--gold);color:var(--navy)}
+.btn-pri:active{background:var(--gold-md)}
+.btn-sec{background:var(--wh);color:var(--navy);border:1.5px solid var(--brd)}
+.btn-sec:active{border-color:var(--gold)}
+.btn-fin{background:var(--navy);color:var(--gold);border:2px solid var(--gold)}
+.btn-fin:active{background:var(--navy-md)}
+.step{display:none}.step.on{display:block}
+/* FINISH */
+#finish{display:none;text-align:center;padding:32px 16px 20px}
+#finish .seal{width:64px;height:64px;background:var(--gold-lt);border:2px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px}
+#finish h2{color:var(--navy);font-size:1.3rem;font-weight:400;margin-bottom:8px}
+#finish p{font-family:'Arial',sans-serif;font-size:13px;color:var(--muted);max-width:400px;margin:0 auto 20px}
+.btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.repbox{text-align:left;background:var(--bg);border:1px solid var(--brd);border-radius:8px;padding:12px 14px;font-family:monospace;font-size:11px;line-height:1.8;white-space:pre-wrap;max-height:260px;overflow-y:auto;color:var(--muted)}
+.send-status{font-family:'Arial',sans-serif;font-size:12px;color:var(--gold-dk);padding:8px 0;min-height:22px;text-align:center}
+footer{text-align:center;padding:16px;font-family:'Arial',sans-serif;font-size:10px;color:var(--hint);border-top:1px solid var(--brd);max-width:860px;margin:0 auto}
+@media print{.site-header,.snav,.nav-btns,.btn-row{display:none!important}.repbox{max-height:none}}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="hi">
+    <div class="logo-wrap"><img id="logoimg" src="" alt="FluxoLeve"/></div>
+    <div class="ht">
+      <small>Diagnóstico de Implantação</small>
+      <strong>Questionário 360° — Grupo Clínico</strong>
+    </div>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+</header>
+
+<div class="hero">
+  <div class="tag">FluxoLeve™ Solução 360°</div>
+  <h2>Diagnóstico de Processos Clínicos</h2>
+  <p>Mapeamento completo para configuração modular — 3 unidades, 1 plataforma integrada.</p>
+</div>
+
+<div class="snav">
+  <div class="dot active" id="d1"></div><div class="dot" id="d2"></div>
+  <div class="dot" id="d3"></div><div class="dot" id="d4"></div>
+  <div class="dot" id="d5"></div><div class="dot" id="d6"></div>
+  <div class="dot" id="d7"></div>
+  <span class="slabel" id="slabel">Etapa 1 de 7</span>
+</div>
+
+<main>
+
+<!-- ===== S1: IDENTIFICAÇÃO ===== -->
+<div class="step on" id="s1">
+<div class="bh"><div class="tb">Bloco 1 — Identificação</div>
+  <h2>Dados do grupo e responsáveis</h2>
+  <p>Estrutura jurídica e contatos do projeto.</p></div>
+
+<div class="card">
+  <div class="q"><label class="ql">Nome do grupo / holding <span class="req">*</span></label>
+  <input type="text" id="q_grupo" placeholder="Ex: Grupo Saúde Plena"/></div>
+  <div class="q"><label class="ql">Responsável pelo projeto <span class="req">*</span>
+    <span class="hint">Quem validará os módulos e tomará decisões</span></label>
+  <input type="text" id="q_resp" placeholder="Nome completo e cargo"/></div>
+  <div class="g2">
+    <div class="q"><label class="ql">E-mail</label>
+    <input type="email" id="q_email" placeholder="email@clinica.com.br"/></div>
+    <div class="q"><label class="ql">WhatsApp</label>
+    <input type="text" id="q_tel" placeholder="(27) 9 9999-0000"/></div>
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="ico">🏢</span>CNPJs do grupo</h3>
+  <div class="g2">
+    <div class="q"><label class="ql">Razão social — Clínica Matriz</label>
+    <input type="text" id="q_rs1" placeholder="Razão Social Ltda"/></div>
+    <div class="q"><label class="ql">CNPJ</label>
+    <input type="text" id="q_cnpj1" placeholder="00.000.000/0001-00"/></div>
+  </div>
+  <div class="g2">
+    <div class="q"><label class="ql">Razão social — Radiologia</label>
+    <input type="text" id="q_rs2" placeholder="Razão Social Ltda"/></div>
+    <div class="q"><label class="ql">CNPJ</label>
+    <input type="text" id="q_cnpj2" placeholder="00.000.000/0001-00"/></div>
+  </div>
+  <div class="g2">
+    <div class="q"><label class="ql">Razão social — Saúde Ocupacional</label>
+    <input type="text" id="q_rs3" placeholder="Razão Social Ltda"/></div>
+    <div class="q"><label class="ql">CNPJ</label>
+    <input type="text" id="q_cnpj3" placeholder="00.000.000/0001-00"/></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="q"><label class="ql">Qual a maior dor do grupo hoje? <span class="req">*</span></label>
+  <textarea id="q_dor" placeholder="Ex: Não temos DRE consolidado, dados em planilhas separadas..."></textarea></div>
+  <div class="q"><label class="ql">Quando quer iniciar a implantação? <span class="req">*</span></label>
+  <div class="rg" id="rg-inicio">
+    <label><input type="radio" name="inicio" value="Imediatamente"/>Imediatamente — quanto antes melhor</label>
+    <label><input type="radio" name="inicio" value="Em até 30 dias"/>Em até 30 dias — já temos urgência</label>
+    <label><input type="radio" name="inicio" value="Em 60 a 90 dias"/>Em 60 a 90 dias — precisamos de preparação</label>
+    <label><input type="radio" name="inicio" value="Sem data definida"/>Sem data definida — ainda em avaliação</label>
+  </div></div>
+</div>
+
+<div class="nav-btns"><div></div>
+<button class="btn btn-pri" onclick="go(2)">Próximo →</button></div>
+</div>
+
+<!-- ===== S2: CLÍNICA MATRIZ ===== -->
+<div class="step" id="s2">
+<div class="bh"><div class="tb">Bloco 2 — Clínica Matriz</div>
+  <h2>Consultas, agenda, prontuário e convênios</h2>
+  <p>Fluxo do atendimento ambulatorial multiespecialidade.</p></div>
+
+<div class="card">
+  <h3><span class="ico">🩺</span>Especialidades e volume</h3>
+  <div class="q"><label class="ql">Especialidades atendidas <span class="req">*</span>
+    <span class="hint">Selecione todas — se houver outras, escreva abaixo</span></label>
+  <div class="chip-wrap" id="c-esp">
+    <span class="chip" data-v="Clínica Geral">Clínica Geral</span>
+    <span class="chip" data-v="Pediatria">Pediatria</span>
+    <span class="chip" data-v="Ginecologia">Ginecologia</span>
+    <span class="chip" data-v="Cardiologia">Cardiologia</span>
+    <span class="chip" data-v="Ortopedia">Ortopedia</span>
+    <span class="chip" data-v="Neurologia">Neurologia</span>
+    <span class="chip" data-v="Dermatologia">Dermatologia</span>
+    <span class="chip" data-v="Psiquiatria">Psiquiatria</span>
+    <span class="chip" data-v="Otorrino">Otorrino</span>
+    <span class="chip" data-v="Urologia">Urologia</span>
+    <span class="chip" data-v="Endocrinologia">Endocrinologia</span>
+    <span class="chip" data-v="Oftalmologia">Oftalmologia</span>
+    <span class="chip" data-v="Reumatologia">Reumatologia</span>
+    <span class="chip" data-v="Pneumologia">Pneumologia</span>
+  </div>
+  <div class="outros-wrap show"><input type="text" id="q_esp_out" placeholder="✏️ Outras especialidades não listadas..."/></div></div>
+  <div class="g2">
+    <div class="q"><label class="ql">Consultas/mês <span class="req">*</span></label>
+    <select id="q_vol_c"><option value="">Selecione</option><option>Até 200</option><option>200 a 500</option><option>500 a 1.000</option><option>1.000 a 2.000</option><option>Acima de 2.000</option></select></div>
+    <div class="q"><label class="ql">Médicos parceiros <span class="req">*</span></label>
+    <select id="q_nmed"><option value="">Selecione</option><option>1 a 5</option><option>5 a 10</option><option>10 a 20</option><option>20 a 40</option><option>Acima de 40</option></select></div>
+  </div>
+  <div class="g2">
+    <div class="q"><label class="ql">Horário de funcionamento</label>
+    <select id="q_func"><option value="">Selecione</option><option>Seg a Sex</option><option>Seg a Sáb</option><option>7 dias por semana</option><option>Plantão 24h</option></select></div>
+    <div class="q"><label class="ql">Pacientes ativos (estimativa)</label>
+    <select id="q_npac"><option value="">Selecione</option><option>Até 500</option><option>500 a 2.000</option><option>2.000 a 5.000</option><option>5.000 a 15.000</option><option>Acima de 15.000</option></select></div>
+  </div>
+  <div class="q"><label class="ql">Laboratório clínico</label>
+  <div class="rg" id="rg-lab">
+    <label><input type="radio" name="lab" value="Próprio"/>Laboratório próprio dentro da clínica</label>
+    <label><input type="radio" name="lab" value="Conveniado (terceiro)"/>Laboratório conveniado (terceiro)</label>
+    <label><input type="radio" name="lab" value="Não — paciente vai a outro local"/>Não — paciente leva pedido para outro local</label>
+  </div></div>
+  <div class="q"><label class="ql">Farmácia / dispensação de medicamentos</label>
+  <div class="rg" id="rg-farm">
+    <label><input type="radio" name="farm" value="Sim, farmácia própria"/>Sim, farmácia própria</label>
+    <label><input type="radio" name="farm" value="Não"/>Não</label>
+  </div></div>
+</div>
+
+<div class="card">
+  <h3><span class="ico">📅</span>Agenda</h3>
+  <div class="q"><label class="ql">Como é feito o agendamento? <span class="req">*</span>
+    <span class="hint">Pode marcar mais de uma</span></label>
+  <div class="cg" id="cg-agenda">
+    <label><input type="checkbox" value="WhatsApp/telefone"/>WhatsApp / telefone</label>
+    <label><input type="checkbox" value="Sistema próprio"/>Sistema próprio atual</label>
+    <label><input type="checkbox" value="Agenda online"/>Agenda online com link externo</label>
+    <label><input type="checkbox" value="Planilha"/>Planilha</label>
+    <label><input type="checkbox" value="Papel/caderno"/>Papel / caderno</label>
+    <label id="lck-agenda-out"><input type="checkbox" value="Outros" onchange="tog('outros-agenda',this)"/>Outros</label>
+  </div>
+  <div class="outros-wrap" id="outros-agenda"><input type="text" id="q_agenda_out" placeholder="✏️ Descreva..."/></div></div>
+  <div class="q"><label class="ql">Confirmação automática de consulta</label>
+  <div class="rg" id="rg-conf">
+    <label><input type="radio" name="conf" value="Sim, automatizada"/>Sim, automatizada (SMS/WhatsApp)</label>
+    <label><input type="radio" name="conf" value="Sim, manualmente"/>Sim, feita manualmente</label>
+    <label><input type="radio" name="conf" value="Não"/>Não fazemos confirmação</label>
+  </div></div>
+</div>
+
+<div class="card">
+  <h3><span class="ico">📋</span>Prontuário</h3>
+  <div class="q"><label class="ql">Prontuário eletrônico hoje? <span class="req">*</span></label>
+  <div class="rg" id="rg-pront">
+    <label><input type="radio" name="pront" value="Sim, totalmente digital"/>Sim, totalmente digital</label>
+    <label><input type="radio" name="pront" value="Parcial — misto papel e digital"/>Parcial — misto papel e digital</label>
+    <label><input type="radio" name="pront" value="Não, apenas papel"/>Não, apenas papel</label>
+  </div></div>
+  <div class="q"><label class="ql">Sistema atual e situação dos dados</label>
+  <div class="g2">
+    <input type="text" id="q_prontsys" placeholder="Ex: iClinic, MV, Tasy, Nenhum..."/>
+    <select id="q_migra"><option value="">Migração de dados?</option><option>Quero migrar o histórico</option><option>Prefiro começar do zero</option><option>Não tem histórico digital</option></select>
+  </div></div>
+</div>
+
+<div class="card">
+  <h3><span class="ico">💳</span>Convênios e honorários</h3>
+  <div class="q"><label class="ql">Convênios / planos atendidos <span class="req">*</span></label>
+  <div class="chip-wrap" id="c-conv">
+    <span class="chip" data-v="Apenas particular">Apenas particular</span>
+    <span class="chip" data-v="Unimed">Unimed</span>
+    <span class="chip" data-v="Bradesco Saúde">Bradesco Saúde</span>
+    <span class="chip" data-v="Amil">Amil</span>
+    <span class="chip" data-v="SulAmérica">SulAmérica</span>
+    <span class="chip" data-v="Cassi/Cassems">Cassi/Cassems</span>
+    <span class="chip" data-v="Porto Seguro">Porto Seguro</span>
+  </div>
+  <div class="outros-wrap show"><input type="text" id="q_conv_out" placeholder="✏️ Outros convênios..."/></div></div>
+  <div class="q"><label class="ql">Faturamento TISS (XML para planos)</label>
+  <div class="rg" id="rg-tiss">
+    <label><input type="radio" name="tiss" value="Sim, por sistema"/>Sim, por sistema</label>
+    <label><input type="radio" name="tiss" value="Sim, manualmente"/>Sim, manualmente</label>
+    <label><input type="radio" name="tiss" value="Não atendemos convênio"/>Não atendemos convênio</label>
+    <label><input type="radio" name="tiss" value="Fazemos sem controle de glosas"/>Fazemos, mas sem controle de glosas</label>
+  </div></div>
+  <div class="q"><label class="ql">Modelo de honorários médicos <span class="req">*</span>
+    <span class="hint">Pode marcar mais de uma</span></label>
+  <div class="cg" id="cg-honor">
+    <label><input type="checkbox" value="% por atendimento (ex: 50%)"/>Porcentagem por atendimento (ex: 50%)</label>
+    <label><input type="checkbox" value="Valor fixo por procedimento"/>Valor fixo por procedimento</label>
+    <label><input type="checkbox" value="Combinação de % e fixo"/>Combinação de % e valor fixo</label>
+    <label><input type="checkbox" value="Cada médico tem regra diferente"/>Cada médico tem regra diferente</label>
+    <label><input type="checkbox" value="Outros" onchange="tog('outros-honor',this)"/>Outros</label>
+  </div>
+  <div class="outros-wrap" id="outros-honor"><input type="text" id="q_honor_out" placeholder="✏️ Descreva o modelo..."/></div></div>
+</div>
+
+<div class="nav-btns">
+<button class="btn btn-sec" onclick="go(1)">← Voltar</button>
+<button class="btn btn-pri" onclick="go(3)">Próximo →</button></div>
+</div>
+
+<!-- ===== S3: RADIOLOGIA ===== -->
+<div class="step" id="s3">
+<div class="bh"><div class="tb">Bloco 3 — Radiologia e Imagem</div>
+  <h2>Modalidades, laudos, parceiros e faturamento</h2>
+  <p>Do pedido do exame ao laudo entregue ao paciente.</p></div>
+
+<div class="card">
+  <h3><span class="ico">🩻</span>Modalidades</h3>
+  <div class="q"><label class="ql">Modalidades realizadas <span class="req">*</span></label>
+  <div class="chip-wrap" id="c-img">
+    <span class="chip" data-v="Raio-X">Raio-X</span>
+    <span class="chip" data-v="Ultrassonografia">Ultrassonografia</span>
+    <span class="chip" data-v="Tomografia (TC)">Tomografia (TC)</span>
+    <span class="chip" data-v="Ressonância (RM)">Ressonância (RM)</span>
+    <span class="chip" data-v="Mamografia">Mamografia</span>
+    <span class="chip" data-v="Densitometria">Densitometria</span>
+    <span class="chip" data-v="Ecocardiograma">Ecocardiograma</span>
+    <span class="chip" data-v="Doppler">Doppler</span>
+    <span class="chip" data-v="Panorâmica">Panorâmica</span>
+  </div>
+  <div class="outros-wrap show"><input type="text" id="q_img_out" placeholder="✏️ Outras modalidades..."/></div></div>
+  <div class="g2">
+    <div class="q"><label class="ql">Volume de exames/mês</label>
+    <select id="q_volimg"><option value="">Selecione</option><option>Até 100</option><option>100 a 300</option><option>300 a 600</option><option>600 a 1.000</option><option>Acima de 1.000</option></select></div>
+    <div class="q"><label class="ql">Empresa de telerradiologia</label>
+    <input type="text" id="q_telerad" placeholder="Ex: Pixeon, Interna..."/></div>
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="ico">📄</span>Laudos</h3>
+  <div class="q"><label class="ql">Como os laudos são emitidos? <span class="req">*</span>
+    <span class="hint">Pode marcar mais de uma</span></label>
+  <div class="cg" id="cg-laudo">
+    <label><input type="checkbox" value="Radiologista próprio"/>Radiologista próprio na clínica</label>
+    <label><input type="checkbox" value="Radiologista parceiro presencial"/>Radiologista parceiro presencial (escala)</label>
+    <label><input type="checkbox" value="Telerradiologia"/>Telerradiologia — laudo remoto</label>
+    <label><input type="checkbox" value="Médico solicitante assina"/>Médico solicitante assina o laudo</label>
+    <label><input type="checkbox" value="Outros" onchange="tog('outros-laudo',this)"/>Outros</label>
+  </div>
+  <div class="outros-wrap" id="outros-laudo"><input type="text" id="q_laudo_out" placeholder="✏️ Descreva..."/></div></div>
+  <div class="q"><label class="ql">Laudos integrados ao prontuário da clínica?</label>
+  <div class="rg" id="rg-laudoint">
+    <label><input type="radio" name="laudoint" value="Sim, automaticamente"/>Sim, automaticamente</label>
+    <label><input type="radio" name="laudoint" value="Sim, manualmente"/>Sim, mas de forma manual</label>
+    <label><input type="radio" name="laudoint" value="Não — sistemas separados"/>Não — sistemas completamente separados</label>
+  </div></div>
+  <div class="q"><label class="ql">PACS — armazenamento digital de imagens</label>
+  <div class="rg" id="rg-pacs">
+    <label><input type="radio" name="pacs" value="Sim, PACS completo"/>Sim, PACS completo</label>
+    <label><input type="radio" name="pacs" value="Parcial"/>Parcial — só algumas modalidades</label>
+    <label><input type="radio" name="pacs" value="Não — CD ou impressão"/>Não — entregamos em CD ou impressão</label>
+  </div></div>
+</div>
+
+<div class="card">
+  <h3><span class="ico">💰</span>Operação</h3>
+  <div class="q"><label class="ql">Agendamento de imagem</label>
+  <div class="rg" id="rg-agimg">
+    <label><input type="radio" name="agimg" value="Mesma recepção da clínica"/>Mesma recepção da clínica</label>
+    <label><input type="radio" name="agimg" value="Recepção própria do setor"/>Recepção própria do setor de imagem</label>
+    <label><input type="radio" name="agimg" value="WhatsApp/telefone separado"/>WhatsApp / telefone separado</label>
+  </div></div>
+  <div class="q"><label class="ql">Caixa de imagem é separado do caixa geral?</label>
+  <div class="rg" id="rg-caiimg">
+    <label><input type="radio" name="caiimg" value="Sim, controle próprio"/>Sim, controle financeiro próprio</label>
+    <label><input type="radio" name="caiimg" value="Não, mesmo caixa"/>Não, vai para o mesmo caixa</label>
+    <label><input type="radio" name="caiimg" value="Misturado"/>Misturado, sem controle claro</label>
+  </div></div>
+  <div class="q"><label class="ql">Principais dificuldades no setor de imagem</label>
+  <textarea id="q_dor_img" placeholder="Ex: laudo demora, imagem se perde, faturamento errado..."></textarea></div>
+</div>
+
+<div class="nav-btns">
+<button class="btn btn-sec" onclick="go(2)">← Voltar</button>
+<button class="btn btn-pri" onclick="go(4)">Próximo →</button></div>
+</div>
+
+<!-- ===== S4: SAÚDE OCUPACIONAL ===== -->
+<div class="step" id="s4">
+<div class="bh"><div class="tb">Bloco 4 — Saúde Ocupacional</div>
+  <h2>PCMSO, ASO, eSocial e empresas-clientes</h2>
+  <p>Processos regulatórios e fluxo operacional da SO.</p></div>
+
+<div class="alert">⚠️ <span>Este módulo tem requisitos legais específicos (NR-7, NR-9, eSocial S-2220/S-2240). As respostas garantem configuração dentro da conformidade regulatória.</span></div>
+
+<div class="card">
+  <h3><span class="ico">🏭</span>Estrutura</h3>
+  <div class="g2">
+    <div class="q"><label class="ql">Empresas-clientes atendidas <span class="req">*</span></label>
+    <select id="q_nemp"><option value="">Selecione</option><option>1 a 10</option><option>10 a 30</option><option>30 a 60</option><option>60 a 100</option><option>Acima de 100</option></select></div>
+    <div class="q"><label class="ql">ASOs emitidos/mês <span class="req">*</span></label>
+    <select id="q_naso"><option value="">Selecione</option><option>Até 50</option><option>50 a 150</option><option>150 a 400</option><option>Acima de 400</option></select></div>
+  </div>
+  <div class="q"><label class="ql">Médico coordenador de PCMSO <span class="req">*</span></label>
+  <div class="rg" id="rg-pcmso">
+    <label><input type="radio" name="pcmso" value="Sim, médico próprio"/>Sim, médico próprio da clínica</label>
+    <label><input type="radio" name="pcmso" value="Sim, parceiro"/>Sim, médico parceiro / terceirizado</label>
+    <label><input type="radio" name="pcmso" value="Não formalmente designado"/>Não está formalmente designado</label>
+  </div></div>
+</div>
+
+<div class="card">
+  <h3><span class="ico">⚕️</span>Serviços prestados</h3>
+  <div class="q"><label class="ql">Quais serviços são oferecidos? <span class="req">*</span></label>
+  <div class="chip-wrap" id="c-soserv">
+    <span class="chip" data-v="ASO">ASO</span>
+    <span class="chip" data-v="PCMSO">PCMSO</span>
+    <span class="chip" data-v="PGR/PPRA">PGR/PPRA</span>
+    <span class="chip" data-v="LTCAT">LTCAT</span>
+    <span class="chip" data-v="Audiometria">Audiometria</span>
+    <span class="chip" data-v="Espirometria">Espirometria</span>
+    <span class="chip" data-v="Acuidade visual">Acuidade visual</span>
+    <span class="chip" data-v="ECG">ECG</span>
+    <span class="chip" data-v="Insalubridade">Insalubridade</span>
+    <span class="chip" data-v="Periculosidade">Periculosidade</span>
+    <span class="chip" data-v="Ergonomia NR-17">Ergonomia</span>
+    <span class="chip" data-v="Psicotestes">Psicotestes</span>
+    <span class="chip" data-v="Toxicológico">Toxicológico</span>
+  </div>
+  <div class="outros-wrap show"><input type="text" id="q_soserv_out" placeholder="✏️ Outros serviços..."/></div></div>
+</div>
+
+<div class="card">
+  <h3><span class="ico">🖥️</span>eSocial e ASO</h3>
+  <div class="q"><label class="ql">Eventos eSocial transmitidos <span class="req">*</span>
+    <span class="hint">Pode marcar mais de uma</span></label>
+  <div class="cg" id="cg-esocial">
+    <label><input type="checkbox" value="S-2220 — Monitoramento de Saúde"/>S-2220 — Monitoramento de Saúde do Trabalhador</label>
+    <label><input type="checkbox" value="S-2240 — Condições de Trabalho"/>S-2240 — Condições e Ambiente de Trabalho</label>
+    <label><input type="checkbox" value="Ainda não transmitimos"/>Ainda não transmitimos ao eSocial</label>
+    <label><input type="checkbox" value="Empresa-cliente transmite"/>A empresa-cliente é responsável pela transmissão</label>
+  </div></div>
+  <div class="q"><label class="ql">Como o ASO é emitido hoje? <span class="req">*</span>
+    <span class="hint">Pode marcar mais de uma</span></label>
+  <div class="cg" id="cg-aso">
+    <label><input type="checkbox" value="Sistema específico de SO"/>Por sistema específico de saúde ocupacional</label>
+    <label><input type="checkbox" value="Word/PDF manual"/>Word ou PDF preenchido manualmente</label>
+    <label><input type="checkbox" value="Prontuário geral"/>Pelo prontuário geral da clínica</label>
+    <label><input type="checkbox" value="Outros" onchange="tog('outros-aso',this)"/>Outros</label>
+  </div>
+  <div class="outros-wrap" id="outros-aso"><input type="text" id="q_aso_out" placeholder="✏️ Descreva..."/></div></div>
+  <div class="q"><label class="ql">Controle de vencimento de exames por colaborador</label>
+  <div class="rg" id="rg-venc">
+    <label><input type="radio" name="venc" value="Sim, alerta automático"/>Sim, com alerta automático</label>
+    <label><input type="radio" name="venc" value="Sim, planilha manual"/>Sim, planilha manual</label>
+    <label><input type="radio" name="venc" value="Não"/>Não temos esse controle</label>
+  </div></div>
+</div>
+
+<div class="card">
+  <h3><span class="ico">📑</span>Contrato e faturamento SO</h3>
+  <div class="q"><label class="ql">Modelo de contrato com empresas-clientes
+    <span class="hint">Pode marcar mais de uma</span></label>
+  <div class="cg" id="cg-contrato">
+    <label><input type="checkbox" value="Mensalidade fixa"/>Mensalidade fixa por empresa</label>
+    <label><input type="checkbox" value="Por evento (ASO/exame)"/>Por evento — cada ASO / exame cobrado separado</label>
+    <label><input type="checkbox" value="Pacote (PCMSO+ASO+laudos)"/>Pacote de serviços (PCMSO + ASO + laudos)</label>
+    <label><input type="checkbox" value="Varia por empresa"/>Varia por empresa — sem padrão</label>
+    <label><input type="checkbox" value="Outros" onchange="tog('outros-contrato',this)"/>Outros</label>
+  </div>
+  <div class="outros-wrap" id="outros-contrato"><input type="text" id="q_contrato_out" placeholder="✏️ Descreva..."/></div></div>
+  <div class="q"><label class="ql">Como é emitida a cobrança?
+    <span class="hint">Pode marcar mais de uma</span></label>
+  <div class="cg" id="cg-fatso">
+    <label><input type="checkbox" value="NFS-e mensal"/>Nota fiscal de serviço por empresa (mensal)</label>
+    <label><input type="checkbox" value="Boleto bancário"/>Boleto bancário</label>
+    <label><input type="checkbox" value="PIX manual"/>PIX com comprovante manual</label>
+    <label><input type="checkbox" value="Outros" onchange="tog('outros-fatso',this)"/>Outros</label>
+  </div>
+  <div class="outros-wrap" id="outros-fatso"><input type="text" id="q_fatso_out" placeholder="✏️ Descreva..."/></div></div>
+  <div class="q"><label class="ql">Principais dificuldades na SO</label>
+  <textarea id="q_dor_so" placeholder="Ex: controle eSocial, emissão de ASO, cobrança das empresas..."></textarea></div>
+</div>
+
+<div class="nav-btns">
+<button class="btn btn-sec" onclick="go(3)">← Voltar</button>
+<button class="btn btn-pri" onclick="go(5)">Próximo →</button></div>
+</div>
+
+<!-- ===== S5: FINANCEIRO ===== -->
+<div class="step" id="s5">
+<div class="bh"><div class="tb">Bloco 5 — Financeiro e DRE</div>
+  <h2>Gestão financeira unificada do grupo</h2>
+  <p>DRE consolidado, contas bancárias e centros de custo.</p></div>
+
+<div class="card">
+  <h3><span class="ico">🏦</span>Estrutura bancária</h3>
+  <div class="q"><label class="ql">As 3 unidades têm contas separadas? <span class="req">*</span></label>
+  <div class="rg" id="rg-contas">
+    <label><input type="radio" name="contas" value="Sim, cada CNPJ tem conta própria"/>Sim, cada CNPJ tem conta própria</label>
+    <label><input type="radio" name="contas" value="Parcial"/>Parcial — algumas compartilham</label>
+    <label><input type="radio" name="contas" value="Não, conta única"/>Não — tudo em uma conta só</label>
+  </div></div>
+  <div class="g2">
+    <div class="q"><label class="ql">Qtd de contas bancárias</label>
+    <select id="q_nbancos"><option value="">Selecione</option><option>1</option><option>2 a 3</option><option>4 a 6</option><option>Mais de 6</option></select></div>
+    <div class="q"><label class="ql">Gestor financeiro</label>
+    <select id="q_gestfin"><option value="">Selecione</option><option>Um gestor para todo o grupo</option><option>Cada unidade tem o seu</option><option>Contabilidade externa</option></select></div>
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="ico">📊</span>DRE e dashboard</h3>
+  <div class="q"><label class="ql">Gestão financeira hoje <span class="req">*</span></label>
+  <div class="rg" id="rg-dre">
+    <label><input type="radio" name="dre" value="Sistema com DRE"/>Em sistema de gestão com DRE</label>
+    <label><input type="radio" name="dre" value="Planilha Excel"/>Planilha Excel</label>
+    <label><input type="radio" name="dre" value="Contabilidade — só vejo no fechamento"/>Pela contabilidade — só vejo no fechamento</label>
+    <label><input type="radio" name="dre" value="Sem controle"/>Sem controle estruturado</label>
+  </div></div>
+  <div class="q"><label class="ql">Modelo de DRE desejado no FluxoLeve</label>
+  <div class="rg" id="rg-dremod">
+    <label><input type="radio" name="dremod" value="Por CNPJ + consolidado do grupo"/>Cada CNPJ separado + resultado consolidado do grupo</label>
+    <label><input type="radio" name="dremod" value="Apenas consolidado"/>Apenas consolidado do grupo</label>
+    <label><input type="radio" name="dremod" value="Apenas por unidade"/>Apenas por unidade</label>
+  </div></div>
+  <div class="q"><label class="ql">Centros de resultado no dashboard
+    <span class="hint">Cada um vira uma linha no DRE</span></label>
+  <div class="chip-wrap" id="c-cr">
+    <span class="chip" data-v="Por especialidade">Por especialidade</span>
+    <span class="chip" data-v="Por médico">Por médico</span>
+    <span class="chip" data-v="Por convênio">Por convênio</span>
+    <span class="chip" data-v="Particular vs convênio">Particular vs convênio</span>
+    <span class="chip" data-v="Por CNPJ">Por CNPJ</span>
+    <span class="chip" data-v="Radiologia">Radiologia</span>
+    <span class="chip" data-v="Saúde Ocupacional">Saúde Ocupacional</span>
+    <span class="chip" data-v="Laboratório">Laboratório</span>
+  </div>
+  <div class="outros-wrap show"><input type="text" id="q_cr_out" placeholder="✏️ Outros centros de resultado..."/></div></div>
+</div>
+
+<div class="card">
+  <h3><span class="ico">🔄</span>Conciliação e pagamentos</h3>
+  <div class="q"><label class="ql">Conciliação bancária</label>
+  <div class="rg" id="rg-conc">
+    <label><input type="radio" name="conc" value="Sistema importa extrato"/>Sistema importa extrato do banco</label>
+    <label><input type="radio" name="conc" value="Manual em planilha"/>Manual em planilha</label>
+    <label><input type="radio" name="conc" value="Não fazemos"/>Não fazemos conciliação</label>
+  </div></div>
+  <div class="g2">
+    <div class="q"><label class="ql">Maquininha de cartão</label>
+    <select id="q_maq"><option value="">Selecione</option><option>Cielo</option><option>Stone</option><option>PagSeguro</option><option>Rede</option><option>Outro</option><option>Não usa</option></select></div>
+    <div class="q"><label class="ql">NFs emitidas/mês</label>
+    <select id="q_nfs"><option value="">Selecione</option><option>Até 50</option><option>50 a 200</option><option>200 a 500</option><option>Acima de 500</option></select></div>
+  </div>
+</div>
+
+<div class="nav-btns">
+<button class="btn btn-sec" onclick="go(4)">← Voltar</button>
+<button class="btn btn-pri" onclick="go(6)">Próximo →</button></div>
+</div>
+
+<!-- ===== S6: INFRAESTRUTURA ===== -->
+<div class="step" id="s6">
+<div class="bh"><div class="tb">Bloco 6 — Infraestrutura</div>
+  <h2>Sistemas atuais e tecnologia</h2>
+  <p>Inventário técnico para garantir implantação sem surpresas.</p></div>
+
+<div class="card">
+  <h3><span class="ico">💻</span>Sistemas</h3>
+  <div class="q"><label class="ql">Sistemas utilizados hoje
+    <span class="hint">Liste todos — ERP, prontuário, agenda, financeiro</span></label>
+  <textarea id="q_sis" placeholder="Ex: iClinic para prontuário, Excel para financeiro, Google Agenda..."></textarea></div>
+  <div class="q"><label class="ql">Maiores problemas com o sistema atual <span class="req">*</span>
+    <span class="hint">Pode marcar mais de uma</span></label>
+  <div class="cg" id="cg-probsis">
+    <label><input type="checkbox" value="Não integra as 3 unidades"/>Não integra as 3 unidades</label>
+    <label><input type="checkbox" value="Financeiro separado da operação"/>Financeiro separado da operação clínica</label>
+    <label><input type="checkbox" value="Sem DRE em tempo real"/>Sem DRE em tempo real</label>
+    <label><input type="checkbox" value="Difícil / suporte ruim"/>Difícil de usar / suporte ruim</label>
+    <label><input type="checkbox" value="Custo elevado"/>Custo elevado</label>
+    <label><input type="checkbox" value="Sem módulo de SO"/>Sem módulo de saúde ocupacional</label>
+    <label><input type="checkbox" value="Sem controle de laudos"/>Sem controle de laudos e imagens</label>
+    <label><input type="checkbox" value="Dados em planilhas"/>Dados espalhados em planilhas</label>
+    <label><input type="checkbox" value="Outros" onchange="tog('outros-probsis',this)"/>Outros</label>
+  </div>
+  <div class="outros-wrap" id="outros-probsis"><input type="text" id="q_probsis_out" placeholder="✏️ Descreva..."/></div></div>
+</div>
+
+<div class="card">
+  <h3><span class="ico">🖥️</span>Infraestrutura</h3>
+  <div class="g2">
+    <div class="q"><label class="ql">Computadores / tablets em uso</label>
+    <select id="q_npcs"><option value="">Selecione</option><option>Até 5</option><option>5 a 10</option><option>10 a 20</option><option>20 a 40</option><option>Acima de 40</option></select></div>
+    <div class="q"><label class="ql">Internet nas unidades</label>
+    <select id="q_net"><option value="">Selecione</option><option>Fibra estável em todas</option><option>Fibra em algumas, instável em outras</option><option>Instável / 3G/4G</option></select></div>
+  </div>
+  <div class="q"><label class="ql">TI interno</label>
+  <div class="rg" id="rg-ti">
+    <label><input type="radio" name="ti" value="Sim, TI próprio"/>Sim, TI interno</label>
+    <label><input type="radio" name="ti" value="TI terceirizado"/>TI terceirizado</label>
+    <label><input type="radio" name="ti" value="Dependemos do fornecedor"/>Dependemos do suporte do fornecedor</label>
+  </div></div>
+</div>
+
+<div class="nav-btns">
+<button class="btn btn-sec" onclick="go(5)">← Voltar</button>
+<button class="btn btn-pri" onclick="go(7)">Próximo →</button></div>
+</div>
+
+<!-- ===== S7: USUÁRIOS E PRIORIDADES ===== -->
+<div class="step" id="s7">
+<div class="bh"><div class="tb">Bloco 7 — Usuários e Prioridades</div>
+  <h2>Perfis de acesso e módulos prioritários</h2>
+  <p>Quem usará o sistema e por onde começamos.</p></div>
+
+<div class="card">
+  <h3><span class="ico">👥</span>Usuários</h3>
+  <div class="q"><label class="ql">Total de usuários <span class="req">*</span>
+    <span class="hint">Todos os colaboradores das 3 unidades</span></label>
+  <select id="q_nusers"><option value="">Selecione</option><option>Até 5</option><option>5 a 10</option><option>10 a 20</option><option>20 a 40</option><option>Acima de 40</option></select></div>
+  <div class="q"><label class="ql">Perfis de acesso necessários <span class="req">*</span></label>
+  <div class="chip-wrap" id="c-perfis">
+    <span class="chip" data-v="Administrador">Administrador</span>
+    <span class="chip" data-v="Recepcionista">Recepcionista</span>
+    <span class="chip" data-v="Médico parceiro">Médico parceiro</span>
+    <span class="chip" data-v="Financeiro">Financeiro</span>
+    <span class="chip" data-v="Técnico radiologia">Técnico radiologia</span>
+    <span class="chip" data-v="Radiologista">Radiologista</span>
+    <span class="chip" data-v="Médico do trabalho">Médico do trabalho</span>
+    <span class="chip" data-v="Técnico SO">Técnico SO</span>
+    <span class="chip" data-v="Diretoria">Diretoria</span>
+  </div>
+  <div class="outros-wrap show"><input type="text" id="q_perfis_out" placeholder="✏️ Outros perfis..."/></div></div>
+</div>
+
+<div class="card">
+  <h3><span class="ico">🎯</span>Prioridades</h3>
+  <div class="q"><label class="ql">Módulos com maior urgência <span class="req">*</span>
+    <span class="hint">Pode marcar mais de um — montaremos o cronograma com base nisso</span></label>
+  <div class="cg" id="cg-prio">
+    <label><input type="checkbox" value="Financeiro e DRE"/>Financeiro e DRE — disponível agora, iniciar imediatamente</label>
+    <label><input type="checkbox" value="Recepção e agenda"/>Recepção e agenda — clínica matriz</label>
+    <label><input type="checkbox" value="Prontuário eletrônico"/>Prontuário eletrônico dos médicos</label>
+    <label><input type="checkbox" value="Laudos e imagem"/>Módulo de laudos e imagem</label>
+    <label><input type="checkbox" value="Saúde Ocupacional"/>Saúde Ocupacional — urgência regulatória (eSocial)</label>
+    <label><input type="checkbox" value="Dashboard consolidado"/>Dashboard e DRE consolidado do grupo</label>
+  </div></div>
+  <div class="q"><label class="ql">Observações finais</label>
+  <textarea id="q_obs" placeholder="Qualquer informação relevante não abordada..."></textarea></div>
+</div>
+
+<div class="nav-btns">
+<button class="btn btn-sec" onclick="go(6)">← Voltar</button>
+<button class="btn btn-fin" onclick="enviar()">Enviar Diagnóstico ✓</button></div>
+</div>
+
+<!-- ===== FINISH ===== -->
+<div id="finish">
+  <div class="seal">✓</div>
+  <h2>Diagnóstico enviado!</h2>
+  <p>Recebemos suas respostas. Em breve nossa equipe entrará em contato com a proposta de implantação personalizada.</p>
+  <div class="btn-row">
+    <button class="btn btn-pri" onclick="copyRep()">Copiar diagnóstico</button>
+    <button class="btn btn-sec" onclick="window.print()">Salvar PDF</button>
+  </div>
+  <p style="font-family:Arial,sans-serif;font-size:11px;color:var(--hint);margin-bottom:8px">Cópia do diagnóstico gerado:</p>
+  <div class="repbox" id="repbox"></div>
+  <div class="send-status" id="send-status"></div>
+</div>
+
+</main>
+<footer>FluxoLeve™ — Solução 360° para grupos clínicos · Diagnóstico de Implantação · Documento confidencial</footer>
+
+<script>
+var SHEETS_URL="https://script.google.com/macros/s/AKfycbzhl-OBwLiUrRwtzfchbKrK8ZqDCQlpZpIr-hmpCEBp-s5ew3nOA1PBfXxqUZYNxMX5/exec";
+var cur=1,total=7;
+var names=['Identificação','Clínica Matriz','Radiologia','Saúde Ocupacional','Financeiro','Infraestrutura','Usuários e Prioridades'];
+
+document.getElementById('logoimg').src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAfQB9ADASIAAhEBAxEB/8QAHQABAAIDAQEBAQAAAAAAAAAAAAcIBQYJBAMBAv/EAFgQAQABAwICBQQKCw4EBAcBAAABAgMEBQYHEQgSITFBEyJRYQkyN1JicXWBs8EUFjM4QlV0kZOxshUXGCM2U4KSlKG00dLTNVdzdiQlQ3JWY4Oio+HwZP/EABsBAQABBQEAAAAAAAAAAAAAAAAFAQIEBgcD/8QANREBAAEDAQQGCgIDAQEBAAAAAAECAwQRBSExYQYSEyJBURVSU3GRobHB4fCi0RQWkoFi8f/aAAwDAQACEQMRAD8AuWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH/2Q==";
+
+function go(n){
+  document.getElementById('s'+cur).classList.remove('on');
+  cur=n;
+  document.getElementById('s'+cur).classList.add('on');
+  for(var i=1;i<=total;i++){
+    var d=document.getElementById('d'+i);
+    d.className='dot'+(i<cur?' done':i===cur?' active':'');
+  }
+  document.getElementById('prog').style.width=Math.round((cur/total)*100)+'%';
+  document.getElementById('slabel').textContent='Etapa '+cur+' de '+total+' — '+names[cur-1];
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// chips
+document.querySelectorAll('.chip').forEach(function(c){
+  c.addEventListener('click',function(){c.classList.toggle('on');});
+});
+// radio/check visual
+document.querySelectorAll('.rg label,.cg label').forEach(function(l){
+  var inp=l.querySelector('input');
+  if(!inp)return;
+  inp.addEventListener('change',function(){
+    if(inp.type==='radio'){
+      document.querySelectorAll('input[name="'+inp.name+'"]').forEach(function(r){r.closest('label').classList.remove('on');});
+    }
+    if(inp.checked)l.classList.add('on'); else l.classList.remove('on');
+  });
+});
+
+// toggle campo outros
+function tog(id,cb){
+  var w=document.getElementById(id);
+  if(w) w.classList.toggle('show',cb.checked);
+}
+
+function gv(id){var e=document.getElementById(id);return e&&e.value?e.value.trim():'—';}
+function gc(id){return[].slice.call(document.querySelectorAll('#'+id+' .chip.on')).map(function(c){return c.dataset.v;}).join(', ')||'—';}
+function gck(id){return[].slice.call(document.querySelectorAll('#'+id+' input[type=checkbox]:checked')).map(function(c){return c.value;}).filter(function(v){return v!=='Outros';}).join(' | ')||'—';}
+function gr(name){var e=document.querySelector('input[name="'+name+'"]:checked');return e?e.value:'—';}
+
+// combina checkbox + campo outros
+function gcom(ckId, outId){
+  var base=gck(ckId);
+  var out=gv(outId);
+  if(out&&out!=='—') return (base!=='—'?base+' | ':'')+out;
+  return base;
+}
+
+function buildRep(){
+  var s=[],sep='━'.repeat(48);
+  s.push('FLUXO LEVE™ — DIAGNÓSTICO 360°');
+  s.push('Questionário de Mapeamento de Processos Clínicos');
+  s.push(new Date().toLocaleString('pt-BR'));
+  s.push(sep);
+  s.push('▌ BLOCO 1 — IDENTIFICAÇÃO');
+  s.push('Grupo: '+gv('q_grupo')+' | Responsável: '+gv('q_resp'));
+  s.push('E-mail: '+gv('q_email')+' | Tel: '+gv('q_tel'));
+  s.push('Matriz: '+gv('q_rs1')+' ('+gv('q_cnpj1')+')');
+  s.push('Radiologia: '+gv('q_rs2')+' ('+gv('q_cnpj2')+')');
+  s.push('SO: '+gv('q_rs3')+' ('+gv('q_cnpj3')+')');
+  s.push('Maior dor: '+gv('q_dor'));
+  s.push('Início: '+gr('inicio'));
+  s.push(sep);
+  s.push('▌ BLOCO 2 — CLÍNICA MATRIZ');
+  s.push('Especialidades: '+gc('c-esp')+(gv('q_esp_out')!='—'?' | '+gv('q_esp_out'):''));
+  s.push('Consultas/mês: '+gv('q_vol_c')+' | Médicos: '+gv('q_nmed')+' | Horário: '+gv('q_func'));
+  s.push('Pacientes ativos: '+gv('q_npac')+' | Migração: '+gv('q_migra'));
+  s.push('Laboratório: '+gr('lab')+' | Farmácia: '+gr('farm'));
+  s.push('Agendamento: '+gcom('cg-agenda','q_agenda_out')+' | Confirmação: '+gr('conf'));
+  s.push('Prontuário: '+gr('pront')+' | Sistema: '+gv('q_prontsys'));
+  s.push('Convênios: '+gc('c-conv')+(gv('q_conv_out')!='—'?' | '+gv('q_conv_out'):''));
+  s.push('TISS: '+gr('tiss'));
+  s.push('Honorários: '+gcom('cg-honor','q_honor_out'));
+  s.push(sep);
+  s.push('▌ BLOCO 3 — RADIOLOGIA');
+  s.push('Modalidades: '+gc('c-img')+(gv('q_img_out')!='—'?' | '+gv('q_img_out'):''));
+  s.push('Volume/mês: '+gv('q_volimg')+' | Telerradiologia: '+gv('q_telerad'));
+  s.push('Laudos: '+gcom('cg-laudo','q_laudo_out'));
+  s.push('Integração: '+gr('laudoint')+' | PACS: '+gr('pacs'));
+  s.push('Agenda img: '+gr('agimg')+' | Caixa img: '+gr('caiimg'));
+  s.push('Dores: '+gv('q_dor_img'));
+  s.push(sep);
+  s.push('▌ BLOCO 4 — SAÚDE OCUPACIONAL');
+  s.push('Empresas: '+gv('q_nemp')+' | ASOs/mês: '+gv('q_naso'));
+  s.push('PCMSO: '+gr('pcmso'));
+  s.push('Serviços: '+gc('c-soserv')+(gv('q_soserv_out')!='—'?' | '+gv('q_soserv_out'):''));
+  s.push('eSocial: '+gck('cg-esocial'));
+  s.push('Emissão ASO: '+gcom('cg-aso','q_aso_out'));
+  s.push('Vencimento: '+gr('venc'));
+  s.push('Contrato: '+gcom('cg-contrato','q_contrato_out'));
+  s.push('Faturamento: '+gcom('cg-fatso','q_fatso_out'));
+  s.push('Dores: '+gv('q_dor_so'));
+  s.push(sep);
+  s.push('▌ BLOCO 5 — FINANCEIRO');
+  s.push('Contas: '+gr('contas')+' | Bancos: '+gv('q_nbancos')+' | Gestor: '+gv('q_gestfin'));
+  s.push('DRE atual: '+gr('dre')+' | Modelo: '+gr('dremod'));
+  s.push('Centros resultado: '+gc('c-cr')+(gv('q_cr_out')!='—'?' | '+gv('q_cr_out'):''));
+  s.push('Conciliação: '+gr('conc')+' | Maquininha: '+gv('q_maq')+' | NFs/mês: '+gv('q_nfs'));
+  s.push(sep);
+  s.push('▌ BLOCO 6 — INFRAESTRUTURA');
+  s.push('Sistemas: '+gv('q_sis'));
+  s.push('Problemas: '+gcom('cg-probsis','q_probsis_out'));
+  s.push('PCs: '+gv('q_npcs')+' | Internet: '+gv('q_net')+' | TI: '+gr('ti'));
+  s.push(sep);
+  s.push('▌ BLOCO 7 — USUÁRIOS');
+  s.push('Usuários: '+gv('q_nusers'));
+  s.push('Perfis: '+gc('c-perfis')+(gv('q_perfis_out')!='—'?' | '+gv('q_perfis_out'):''));
+  s.push('Prioridades: '+gck('cg-prio'));
+  s.push('Obs: '+gv('q_obs'));
+  s.push(sep);
+  s.push('FluxoLeve™ Diagnóstico 360°');
+  return s.join('\n');
+}
+
+function buildPayload(){
+  return{
+    grupo:gv('q_grupo'),responsavel:gv('q_resp'),email:gv('q_email'),telefone:gv('q_tel'),
+    rs1:gv('q_rs1'),cnpj1:gv('q_cnpj1'),rs2:gv('q_rs2'),cnpj2:gv('q_cnpj2'),rs3:gv('q_rs3'),cnpj3:gv('q_cnpj3'),
+    maior_dor:gv('q_dor'),inicio_desejado:gr('inicio'),
+    especialidades:gc('c-esp'),outras_esp:gv('q_esp_out'),consultas_mes:gv('q_vol_c'),
+    medicos:gv('q_nmed'),horario:gv('q_func'),pacientes_ativos:gv('q_npac'),migracao:gv('q_migra'),
+    laboratorio:gr('lab'),farmacia:gr('farm'),
+    agendamento:gcom('cg-agenda','q_agenda_out'),confirmacao:gr('conf'),
+    prontuario:gr('pront'),sistema_pront:gv('q_prontsys'),
+    convenios:gc('c-conv'),outros_conv:gv('q_conv_out'),tiss:gr('tiss'),
+    honorarios:gcom('cg-honor','q_honor_out'),
+    modalidades_img:gc('c-img'),outras_img:gv('q_img_out'),vol_img:gv('q_volimg'),telerradiologia:gv('q_telerad'),
+    laudos:gcom('cg-laudo','q_laudo_out'),laudo_integracao:gr('laudoint'),pacs:gr('pacs'),
+    agenda_img:gr('agimg'),caixa_img:gr('caiimg'),dor_img:gv('q_dor_img'),
+    empresas_so:gv('q_nemp'),asos_mes:gv('q_naso'),pcmso:gr('pcmso'),
+    servicos_so:gc('c-soserv'),outros_soserv:gv('q_soserv_out'),
+    esocial:gck('cg-esocial'),emissao_aso:gcom('cg-aso','q_aso_out'),vencimento:gr('venc'),
+    contrato_so:gcom('cg-contrato','q_contrato_out'),faturamento_so:gcom('cg-fatso','q_fatso_out'),dor_so:gv('q_dor_so'),
+    contas:gr('contas'),bancos:gv('q_nbancos'),gestor_fin:gv('q_gestfin'),
+    dre_atual:gr('dre'),dre_modelo:gr('dremod'),centros_resultado:gc('c-cr'),outros_cr:gv('q_cr_out'),
+    conciliacao:gr('conc'),maquininha:gv('q_maq'),nfs_mes:gv('q_nfs'),
+    sistemas:gv('q_sis'),problemas_sis:gcom('cg-probsis','q_probsis_out'),
+    num_pcs:gv('q_npcs'),internet:gv('q_net'),ti:gr('ti'),
+    num_usuarios:gv('q_nusers'),perfis:gc('c-perfis'),outros_perfis:gv('q_perfis_out'),
+    prioridades:gck('cg-prio'),obs:gv('q_obs'),
+    diagnostico_completo:buildRep()
+  };
+}
+
+function enviar(){
+  var txt=buildRep();
+  document.getElementById('s'+cur).classList.remove('on');
+  document.getElementById('finish').style.display='block';
+  document.getElementById('prog').style.width='100%';
+  document.getElementById('slabel').textContent='Concluído';
+  document.getElementById('repbox').textContent=txt;
+  window.scrollTo({top:0,behavior:'smooth'});
+  var st=document.getElementById('send-status');
+  st.textContent='Enviando para a planilha...';
+  fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildPayload())})
+    .then(function(){st.textContent='✓ Dados salvos na planilha com sucesso.';})
+    .catch(function(){st.textContent='Copie o diagnóstico acima e encaminhe para nossa equipe.';});
+}
+
+function copyRep(){
+  var txt=document.getElementById('repbox').textContent;
+  if(navigator.clipboard){navigator.clipboard.writeText(txt).then(function(){alert('Copiado!');});}
+  else{var t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);alert('Copiado!');}
+}
+</script>
+</body>
+</html>
