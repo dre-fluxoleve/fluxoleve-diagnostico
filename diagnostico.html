@@ -567,6 +567,32 @@ footer{text-align:center;padding:16px;font-family:'Arial',sans-serif;font-size:1
     <div class="q"><label class="ql">NFs emitidas/mês</label>
     <select id="q_nfs"><option value="">Selecione</option><option>Até 50</option><option>50 a 200</option><option>200 a 500</option><option>Acima de 500</option></select></div>
   </div>
+
+  <div class="card">
+    <h3><span class="ico">💵</span>Formas de recebimento</h3>
+    <div class="q"><label class="ql">Como o grupo recebe dos pacientes / empresas? <span class="req">*</span>
+      <span class="hint">Pode marcar mais de uma</span></label>
+    <div class="cg" id="cg-receb">
+      <label><input type="checkbox" value="Dinheiro"/>Dinheiro</label>
+      <label><input type="checkbox" value="Cartão de débito"/>Cartão de débito</label>
+      <label><input type="checkbox" value="Cartão de crédito"/>Cartão de crédito</label>
+      <label><input type="checkbox" value="PIX"/>PIX</label>
+      <label><input type="checkbox" value="Boleto bancário"/>Boleto bancário</label>
+      <label><input type="checkbox" value="Transferência bancária (TED/DOC)"/>Transferência bancária (TED/DOC)</label>
+      <label><input type="checkbox" value="Convênio — faturamento mensal"/>Convênio — faturamento mensal</label>
+      <label><input type="checkbox" value="Contrato empresa SO — mensalidade"/>Contrato empresa SO — mensalidade</label>
+      <label><input type="checkbox" value="Outros" onchange="tog('outros-receb',this)"/>Outros</label>
+    </div>
+    <div class="outros-wrap" id="outros-receb"><input type="text" id="q_receb_out" placeholder="✏️ Outras formas de recebimento..."/></div></div>
+    <div class="q"><label class="ql">Existe inadimplência relevante?
+      <span class="hint">Pacientes ou empresas com pagamentos em atraso</span></label>
+    <div class="rg" id="rg-inadim">
+      <label><input type="radio" name="inadim" value="Sim, é um problema relevante"/>Sim, é um problema relevante</label>
+      <label><input type="radio" name="inadim" value="Sim, mas controlamos bem"/>Sim, mas controlamos bem</label>
+      <label><input type="radio" name="inadim" value="Não, baixa inadimplência"/>Não, temos baixa inadimplência</label>
+    </div></div>
+  <div style="display:none">
+  </div>
 </div>
 
 <div class="nav-btns">
@@ -630,22 +656,31 @@ footer{text-align:center;padding:16px;font-family:'Arial',sans-serif;font-size:1
 
 <div class="card">
   <h3><span class="ico">👥</span>Usuários</h3>
-  <div class="q"><label class="ql">Total de usuários <span class="req">*</span>
-    <span class="hint">Todos os colaboradores das 3 unidades</span></label>
-  <select id="q_nusers"><option value="">Selecione</option><option>Até 5</option><option>5 a 10</option><option>10 a 20</option><option>20 a 40</option><option>Acima de 40</option></select></div>
-  <div class="q"><label class="ql">Perfis de acesso necessários <span class="req">*</span></label>
-  <div class="chip-wrap" id="c-perfis">
-    <span class="chip" data-v="Administrador">Administrador</span>
-    <span class="chip" data-v="Recepcionista">Recepcionista</span>
-    <span class="chip" data-v="Médico parceiro">Médico parceiro</span>
-    <span class="chip" data-v="Financeiro">Financeiro</span>
-    <span class="chip" data-v="Técnico radiologia">Técnico radiologia</span>
-    <span class="chip" data-v="Radiologista">Radiologista</span>
-    <span class="chip" data-v="Médico do trabalho">Médico do trabalho</span>
-    <span class="chip" data-v="Técnico SO">Técnico SO</span>
-    <span class="chip" data-v="Diretoria">Diretoria</span>
+  <div class="q"><label class="ql">Quantidade de usuários por perfil <span class="req">*</span>
+    <span class="hint">Informe quantas pessoas usarão cada perfil — deixe 0 se não tiver</span></label>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+    <div class="q"><label class="ql" style="font-weight:400;font-size:12px">Administrador / Gestor</label>
+    <input type="number" id="u_admin" placeholder="0" min="0" style="text-align:center"/></div>
+    <div class="q"><label class="ql" style="font-weight:400;font-size:12px">Diretoria / Sócio</label>
+    <input type="number" id="u_dir" placeholder="0" min="0" style="text-align:center"/></div>
+    <div class="q"><label class="ql" style="font-weight:400;font-size:12px">Recepcionista</label>
+    <input type="number" id="u_recep" placeholder="0" min="0" style="text-align:center"/></div>
+    <div class="q"><label class="ql" style="font-weight:400;font-size:12px">Financeiro</label>
+    <input type="number" id="u_fin" placeholder="0" min="0" style="text-align:center"/></div>
+    <div class="q"><label class="ql" style="font-weight:400;font-size:12px">Médico parceiro</label>
+    <input type="number" id="u_med" placeholder="0" min="0" style="text-align:center"/></div>
+    <div class="q"><label class="ql" style="font-weight:400;font-size:12px">Técnico de radiologia</label>
+    <input type="number" id="u_tecrad" placeholder="0" min="0" style="text-align:center"/></div>
+    <div class="q"><label class="ql" style="font-weight:400;font-size:12px">Radiologista</label>
+    <input type="number" id="u_radiol" placeholder="0" min="0" style="text-align:center"/></div>
+    <div class="q"><label class="ql" style="font-weight:400;font-size:12px">Médico do trabalho</label>
+    <input type="number" id="u_medtrab" placeholder="0" min="0" style="text-align:center"/></div>
+    <div class="q"><label class="ql" style="font-weight:400;font-size:12px">Técnico SO</label>
+    <input type="number" id="u_tecso" placeholder="0" min="0" style="text-align:center"/></div>
+    <div class="q"><label class="ql" style="font-weight:400;font-size:12px">Outros perfis</label>
+    <input type="text" id="u_outros" placeholder="Ex: 2 enfermeiros"/></div>
   </div>
-  <div class="outros-wrap show"><input type="text" id="q_perfis_out" placeholder="✏️ Outros perfis..."/></div></div>
+  </div>
 </div>
 
 <div class="card">
@@ -687,7 +722,7 @@ footer{text-align:center;padding:16px;font-family:'Arial',sans-serif;font-size:1
 <footer>FluxoLeve™ — Solução 360° para grupos clínicos · Diagnóstico de Implantação · Documento confidencial</footer>
 
 <script>
-var SHEETS_URL="https://script.google.com/macros/s/AKfycbzhl-OBwLiUrRwtzfchbKrK8ZqDCQlpZpIr-hmpCEBp-s5ew3nOA1PBfXxqUZYNxMX5/exec";
+var SHEETS_URL="https://script.google.com/a/macros/sofisticai.com.br/s/AKfycbxJOyZLJtti7Ym-a8p_Laub9FuCj5Rc-Ag526vSiWSb4JN_GnK6WwmEyWs3kZOK-NbO/exec";
 var cur=1,total=7;
 var names=['Identificação','Clínica Matriz','Radiologia','Saúde Ocupacional','Financeiro','Infraestrutura','Usuários e Prioridades'];
 
@@ -790,6 +825,7 @@ function buildRep(){
   s.push('Contas: '+gr('contas')+' | Bancos: '+gv('q_nbancos')+' | Gestor: '+gv('q_gestfin'));
   s.push('DRE atual: '+gck('cg-dre')+(gv('q_dre_out')!='—'?' | '+gv('q_dre_out'):'')+' | Modelo: '+gck('cg-dremod')+(gv('q_dremod_out')!='—'?' | '+gv('q_dremod_out'):''));
   s.push('Centros resultado: '+gc('c-cr')+(gv('q_cr_out')!='—'?' | '+gv('q_cr_out'):''));
+  s.push('Recebimentos: '+gck('cg-receb')+(gv('q_receb_out')!='—'?' | '+gv('q_receb_out'):'')+' | Inadimplência: '+gr('inadim'));
   s.push('Conciliação: '+gck('cg-conc')+(gv('q_conc_out')!='—'?' | '+gv('q_conc_out'):'')+' | Maquininha: '+gv('q_maq')+' | NFs/mês: '+gv('q_nfs'));
   s.push(sep);
   s.push('▌ BLOCO 6 — INFRAESTRUTURA');
@@ -798,7 +834,17 @@ function buildRep(){
   s.push('PCs: '+gv('q_npcs')+' | Internet: '+gv('q_net')+' | TI: '+gr('ti'));
   s.push(sep);
   s.push('▌ BLOCO 7 — USUÁRIOS');
-  s.push('Usuários: '+gv('q_nusers'));
+  s.push('Usuários por perfil:');
+  s.push('  Administrador: '+(document.getElementById('u_admin').value||'0')+
+    ' | Diretoria: '+(document.getElementById('u_dir').value||'0')+
+    ' | Recepcionista: '+(document.getElementById('u_recep').value||'0')+
+    ' | Financeiro: '+(document.getElementById('u_fin').value||'0'));
+  s.push('  Médico parceiro: '+(document.getElementById('u_med').value||'0')+
+    ' | Téc.Radiologia: '+(document.getElementById('u_tecrad').value||'0')+
+    ' | Radiologista: '+(document.getElementById('u_radiol').value||'0'));
+  s.push('  Méd.Trabalho: '+(document.getElementById('u_medtrab').value||'0')+
+    ' | Téc.SO: '+(document.getElementById('u_tecso').value||'0')+
+    ' | Outros: '+(document.getElementById('u_outros').value||'—'));
   s.push('Perfis: '+gc('c-perfis')+(gv('q_perfis_out')!='—'?' | '+gv('q_perfis_out'):''));
   s.push('Prioridades: '+gck('cg-prio'));
   s.push('Obs: '+gv('q_obs'));
@@ -828,10 +874,20 @@ function buildPayload(){
     contrato_so:gcom('cg-contrato','q_contrato_out'),faturamento_so:gcom('cg-fatso','q_fatso_out'),dor_so:gv('q_dor_so'),
     contas:gr('contas'),bancos:gv('q_nbancos'),gestor_fin:gv('q_gestfin'),
     dre_atual:gck('cg-dre'),outros_dre:gv('q_dre_out'),dre_modelo:gck('cg-dremod'),outros_dremod:gv('q_dremod_out'),centros_resultado:gc('c-cr'),outros_cr:gv('q_cr_out'),
+    formas_recebimento:gck('cg-receb'),outros_receb:gv('q_receb_out'),inadimplencia:gr('inadim'),
     conciliacao:gck('cg-conc'),outros_conc:gv('q_conc_out'),maquininha:gv('q_maq'),nfs_mes:gv('q_nfs'),
     sistemas:gv('q_sis'),problemas_sis:gcom('cg-probsis','q_probsis_out'),
     num_pcs:gv('q_npcs'),internet:gv('q_net'),ti:gr('ti'),
-    num_usuarios:gv('q_nusers'),perfis:gc('c-perfis'),outros_perfis:gv('q_perfis_out'),
+    usuarios_admin:document.getElementById('u_admin').value||'0',
+    usuarios_diretoria:document.getElementById('u_dir').value||'0',
+    usuarios_recep:document.getElementById('u_recep').value||'0',
+    usuarios_fin:document.getElementById('u_fin').value||'0',
+    usuarios_medico:document.getElementById('u_med').value||'0',
+    usuarios_tecrad:document.getElementById('u_tecrad').value||'0',
+    usuarios_radiol:document.getElementById('u_radiol').value||'0',
+    usuarios_medtrab:document.getElementById('u_medtrab').value||'0',
+    usuarios_tecso:document.getElementById('u_tecso').value||'0',
+    usuarios_outros:document.getElementById('u_outros').value||'—',perfis:gc('c-perfis'),outros_perfis:gv('q_perfis_out'),
     prioridades:gck('cg-prio'),obs:gv('q_obs'),
     diagnostico_completo:buildRep()
   };
